@@ -1,0 +1,24 @@
+from collections import deque
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        Q = deque()
+        cache = set(wordList)
+        Q.append([beginWord,1])
+
+        while len(Q) != 0:
+            word,dis = Q.popleft()
+            if word == endWord:
+                return dis
+            # print(word)
+            for j in range(len(word)):
+                original = word[j]
+                # print(original,word)
+                for i in range(ord('a'),ord('z')+1):
+                    word1 = word[0:j]+chr(i)+word[j+1:]
+                    # print(word1)
+                    if word1 in cache:
+                        Q.append([word1,dis+1])
+                        cache.remove(word1)
+                word = word[0:j] +original+word[j+1:]
+        return 0
+                
