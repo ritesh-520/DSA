@@ -1,0 +1,22 @@
+class Solution:
+    def areAlmostEqual(self, s1: str, s2: str) -> bool:
+        map = {}
+        # if s1 == s2:
+            # return True
+        indices = []
+        for i in range(len(s1)):
+            if s1[i] != s2[i]:
+                indices.append(i)
+            if len(indices) > 2:
+                return False
+        if len(indices) == 2:
+            i,j = indices
+            if s1[i] == s2[j] and s1[j] == s2[i]:
+                return True
+            else:
+                return False
+        return len(indices) == 0
+        # when we have same strings len(indices) = 0
+        # when we have more than two indices that are different > 2 return False
+        # when we have two indices but the characateers are not equal return False
+        # when 2 and the characters are equall when swapped or cross checking return True
