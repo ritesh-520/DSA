@@ -1,0 +1,71 @@
+from collections import deque ,defaultdict
+class Solution:
+    def findLadders(self, beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:
+        q = deque()
+        adj = defaultdict(list)
+        dic = set()
+        for i in wordList:
+            dic.add(i)
+
+        q.append(beginWord)
+        vis = {}
+        vis[beginWord] = 0
+        while q:
+            curr = q.popleft()
+            # temp = curr
+            for i in range(len(curr)):
+                temp = curr
+                for j in range(ord('a'),ord('z')+1):
+                    if temp[i] == chr(j):
+                        continue
+                    temp = temp[0:i] + chr(j) + temp[i+1:]
+                    if temp in dic:
+                        if temp not in vis:
+                            vis[temp] = vis[curr] +1
+                            q.append(temp)
+                            adj[curr].append(temp)
+                        elif vis[temp] == vis[curr] +1:
+                            adj[curr].append(temp)
+        # print(adj)
+        path = []
+        ans = []
+        def dfs(beginWord,endWord,path,adj):
+            path.append(beginWord)
+            if beginWord == endWord:
+                ans.append(path.copy())
+                path.pop()
+                return
+            for i in adj[beginWord]:
+                dfs(i,endWord,path,adj)
+            path.pop()
+        dfs(beginWord,endWord,path,adj)
+        return ans
+
+            
+Intuition
+Build up on Word Ladder I problem. We try to find all nodes per level and store each level in an array. Later build path to beginWord from endWord considering all these levels.
+
+Approach
+isConnected(a, b) - checks if two words are connected i.e it checks if 'a' and 'b' differ by exactly one letter.
+
+BFS - Stores each level in a array called 'nodesPerLevel'. 'nodesPerLevel' consists of arrays of all nodes(words) at each BFS level.At the end of BFS traversal we'd have something like,
+
+Ex: nodesPerLevel = [ [ 'hit' ], [ 'hot' ], [ 'dot', 'lot' ], [ 'dog', 'log' ] ]
+
+Construct Paths from endWord to beginWord - Start by setting,
+ans = [[endWord]],
+by doing this we make sure we initially have at least one path. Start iterating from last level. Now, for each current path -> get its current first word and -> get all connected words on the current level to this first word. Each time there is a connected word, create a new path and push it to the 'ans' array.
+
+Sample Simulation:
+[ [ 'cog' ] ]
+[ [ 'dog', 'cog' ], [ 'log', 'cog' ] ]
+[ [ 'dot', 'dog', 'cog' ], [ 'lot', 'log', 'cog' ] ]
+[ [ 'hot', 'dot', 'dog', 'cog' ], [ 'hot', 'lot', 'log', 'cog' ] ]
+
+Complexity
+Time complexity:
+BFS: Explores all possible transformations, and for each word it checks all possible transformations of its characters(26 letters). If 'n' is the number of words in wordList and 'L' is the length of the each word in, then time complexity of the BFS part is O(n * 26 * L).
+Builing Path: O (Number of Levels * Number of Valid Paths)
+Space complexity:
+O (L) where L is the number of words in wordList
+Code
